@@ -28,17 +28,39 @@
                 message: document.getElementById('message').value
             };
 
-            fetch('https://script.google.com/macros/s/AKfycbzNROVMvUjqjIArBev2cqJTSHUp9E8RkohGclRkNsvEDMNlASfLfMWlCrDY7PPULaxnDA/exec', {
+            var formData2 = {
+                userName: formData.name,
+                userEmail: formData.email,
+                userMessage: formData.message,
+                timestamp: new Date().toISOString()
+            };
+
+            var url = 'https://script.google.com/macros/s/AKfycbzNROVMvUjqjIArBev2cqJTSHUp9E8RkohGclRkNsvEDMNlASfLfMWlCrDY7PPULaxnDA/exec';
+
+            fetch(url, {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             })
             .then(response => response.text())
-            .then(data => {
-                alert(data);
+            .then(data1 => {
+                console.log('Первый объект отправлен:', data1);
+
+                return fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData2)
+                });
+            })
+            .then(response => response.text())
+            .then(data2 => {
+                console.log('Второй объект отправлен:', data2);
+
+                alert('Оба объекта успешно отправлены!');
                 document.getElementById('feedbackForm').reset();
             })
             .catch(error => {
-                console.error('Ошибка:', error);
+                console.error('Ошибка при отправке:', error);
             });
         });
     </script>
